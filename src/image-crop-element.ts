@@ -140,26 +140,38 @@ function startUpdate(event: TouchEvent | MouseEvent) {
 }
 
 function updateDimensions(target: ImageCropElement, deltaX: number, deltaY: number, reposition = true) {
-  let newSide = Math.max(Math.abs(deltaX), Math.abs(deltaY), 10)
+  const origSide = Math.max(Math.abs(deltaX), Math.abs(deltaY), 10)
+  const ratio = target.aspectRatio || 1
+  const newX = origSide * ratio
+
   const pos = startPositions.get(target)
   if (!pos) return
   const {box, image} = constructedElements.get(target) || {}
-
   if (!box || !image) return
 
-  newSide = Math.min(
-    newSide,
-    deltaY > 0 ? image.height - pos.startY : pos.startY,
-    deltaX > 0 ? image.width - pos.startX : pos.startX,
-  )
-  const x = reposition ? Math.round(Math.max(0, deltaX > 0 ? pos.startX : pos.startX - newSide)) : box.offsetLeft
-  const y = reposition ? Math.round(Math.max(0, deltaY > 0 ? pos.startY : pos.startY - newSide)) : box.offsetTop
-  const ratio = target.aspectRatio
+  const x = reposition
+    ? Math.round(
+        Math.max(
+          0,
+          deltaX > 0 ? pos.startX : pos.startX - origSide, // <-- yes
+        ),
+      )
+    : box.offsetLeft
+
+  const y = reposition
+    ? Math.round(
+        Math.max(
+          0,
+          deltaY > 0 ? pos.startY : pos.startY - origSide, // <-- no
+        ),
+      )
+    : box.offsetTop
+
   box.style.left = `${x}px`
   box.style.top = `${y}px`
-  box.style.width = `${ratio ? newSide * ratio : newSide}px`
-  box.style.height = `${newSide}px`
-  fireChangeEvent(target, {x, y, width: newSide, height: newSide})
+  box.style.width = `${newX}px`
+  box.style.height = `${origSide}px`
+  fireChangeEvent(target, {x, y, width: newX, height: origSide})
 }
 
 function setInitialPosition(el: ImageCropElement) {
