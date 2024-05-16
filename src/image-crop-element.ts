@@ -144,6 +144,7 @@ function updateDimensions(target: ImageCropElement, deltaX: number, deltaY: numb
   const pos = startPositions.get(target)
   if (!pos) return
   const {box, image} = constructedElements.get(target) || {}
+
   if (!box || !image) return
 
   newSide = Math.min(
@@ -151,14 +152,12 @@ function updateDimensions(target: ImageCropElement, deltaX: number, deltaY: numb
     deltaY > 0 ? image.height - pos.startY : pos.startY,
     deltaX > 0 ? image.width - pos.startX : pos.startX,
   )
-
   const x = reposition ? Math.round(Math.max(0, deltaX > 0 ? pos.startX : pos.startX - newSide)) : box.offsetLeft
   const y = reposition ? Math.round(Math.max(0, deltaY > 0 ? pos.startY : pos.startY - newSide)) : box.offsetTop
-
+  const ratio = target.aspectRatio
   box.style.left = `${x}px`
   box.style.top = `${y}px`
-
-  box.style.width = `${newSide}px`
+  box.style.width = `${ratio ? newSide * ratio : newSide}px`
   box.style.height = `${newSide}px`
   fireChangeEvent(target, {x, y, width: newSide, height: newSide})
 }
@@ -327,7 +326,7 @@ export class ImageCropElement extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['src']
+    return ['src', 'aspectratio']
   }
 
   get src(): string | null {
@@ -340,6 +339,18 @@ export class ImageCropElement extends HTMLElement {
     } else {
       this.removeAttribute('src')
     }
+  }
+
+  get aspectRatio() {
+    const aspectRatio = this.getAttribute('aspectratio')
+    if (!aspectRatio) return null
+
+    const ns = aspectRatio.split('/')
+    const first = ns[0].trim()
+    const second = ns[1].trim()
+    if (!first || !second) throw new Error('Badly formatted aspect ratio')
+
+    return parseInt(first) / parseInt(second)
   }
 
   get loaded(): boolean {
