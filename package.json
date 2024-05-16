@@ -1,5 +1,5 @@
 {
-  "name": "@github/image-crop-element",
+  "name": "@nichoth/image-crop-element",
   "version": "5.0.0",
   "description": "Select area for cropping an image. This does not actually crop.",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "prepublishOnly": "npm run build",
     "pretest": "npm run build",
     "test": "web-test-runner",
-    "postpublish": "npm publish --ignore-scripts --@github:registry='https://npm.pkg.github.com'",
+    "postversion": "git push --follow-tags && npm publish",
     "manifest": "custom-elements-manifest analyze"
   },
   "keywords": [
