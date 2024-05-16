@@ -4,9 +4,25 @@ This loads an image and creates a crop area that user can modify. An event is fi
 
 ## Installation
 
+```sh
+npm i --S @nichoth/image-crop-element
 ```
-$ npm install --save @github/image-crop-element
+
+## fork
+
+This is a fork of [@github/image-crop-element](https://github.com/github/image-crop-element).
+
+### aspect ratio
+You can pass in an aspect ratio attribute:
+
+```html
+<image-crop
+    aspectratio="4 / 5"
+    src="100.jpg"
+></image-crop>
 ```
+
+This will constrain the image crop border to the given ratio.
 
 ## Usage
 
