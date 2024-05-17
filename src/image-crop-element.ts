@@ -153,7 +153,7 @@ function updateDimensions(target: ImageCropElement, deltaX: number, deltaY: numb
     ? Math.round(
         Math.max(
           0,
-          deltaX > 0 ? pos.startX : pos.startX - origSide, // <-- yes
+          deltaX > 0 ? pos.startX : pos.startX - newX, // <-- yes
         ),
       )
     : box.offsetLeft
